@@ -24,7 +24,7 @@ public class SensorResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerSensor(String json) {
-        log.info("POST /central/sensor - " + json);
+        log.info("POST /measurements/sensor: {}", json);
         if (json == null) {
             return Response.status(200).entity(false).build();
         }
@@ -45,7 +45,7 @@ public class SensorResource {
     @DELETE
     @Path("/{username}")
     public Response deregisterSensor(@PathParam("username") String username) {
-        log.info("DELETE /central/sensor/" + username);
+        log.info("DELETE /measurements/sensor/{}", username);
         Sensor sensor = Memory.getSensorForName(username);
 
         if (sensor == null) {
@@ -67,7 +67,7 @@ public class SensorResource {
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getClosestSensor(@PathParam("username") String username) {
-        log.info("GET /central/sensor/{}", username);
+        log.info("GET /measurements/sensor/{}", username);
 
         Sensor thisSensor = Memory.getSensorForName(username);
         Sensor closestSensor = Memory.getClosestSensor(thisSensor);
@@ -81,7 +81,7 @@ public class SensorResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response postMeasurement(@PathParam("username") String username, String json) {
-        log.info("POST /central/sensor/{}/measure {}", username, json);
+        log.info("POST /measurements/sensor/{}/measure {}", username, json);
 
         Sensor sensor = Memory.getSensorForName(username);
         if (sensor == null) {

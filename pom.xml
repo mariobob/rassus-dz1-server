@@ -74,7 +74,7 @@
                 <configuration>
                     <scanIntervalSeconds>60</scanIntervalSeconds>
                     <webApp>
-                        <contextPath>/movies</contextPath>
+                        <contextPath>/measurements</contextPath>
                     </webApp>
                 </configuration>
             </plugin>
