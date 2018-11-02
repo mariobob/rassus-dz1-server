@@ -93,9 +93,9 @@ public class SensorResource {
             Gson gson = new Gson();
             Measurement measurement = gson.fromJson(json, Measurement.class);
 
-            boolean success = Memory.storeMeasurement(username, measurement);
-            log.info("{} stored measurement {} for sensor {}",
-                    (success ? "Successfully" : "Unsuccessfully"), measurement, sensor);
+            boolean success = Memory.storeMeasurement(sensor, measurement);
+            log.info("{} stored measurement for \\sensor {}: {}",
+                    (success ? "Successfully" : "Unsuccessfully"), sensor, measurement);
             return Response.status(201).entity(success).build();
         } catch (Exception e) {
             log.info("Invalid data for measurement: {}", json);

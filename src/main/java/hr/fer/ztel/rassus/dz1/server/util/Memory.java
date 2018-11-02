@@ -5,50 +5,55 @@ import hr.fer.ztel.rassus.dz1.server.model.Sensor;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This class keeps track of data for sensors and measurements.
  */
 public class Memory {
 
-    private static Set<Sensor> sensorSet = new HashSet<>();
-    private static Map<String, List<Measurement>> measurementMap = new HashMap<>();
+    private static Map<Sensor, List<Measurement>> sensorMeasurementsMap = new HashMap<>();
 
     public static boolean registerSensor(Sensor sensor) {
-        return sensorSet.add(sensor);
+        if (sensorMeasurementsMap.containsKey(sensor)) {
+            return false;
+        }
+
+        sensorMeasurementsMap.put(sensor, new LinkedList<>());
+        return true;
     }
 
     public static Sensor getClosestSensor(Sensor sensor) {
-        if (sensorSet.size() == 1) {
+        if (sensorMeasurementsMap.size() == 1 && sensorMeasurementsMap.containsKey(sensor)) {
+            // If this is the only sensor in memory
             return null;
         }
 
-        return sensorSet.stream()
+        return sensorMeasurementsMap.keySet().stream()
                 .filter(s -> !s.equals(sensor))
                 .min(Comparator.comparingDouble(s -> Utility.distance(sensor.getLocation(), s.getLocation())))
                 .orElse(null);
     }
 
     public static Sensor getSensorForName(String username) {
-        return sensorSet.stream()
+        return sensorMeasurementsMap.keySet().stream()
                 .filter(s -> s.getUsername().equals(username))
                 .findAny()
                 .orElse(null);
     }
 
     public static boolean deregisterSensor(Sensor sensor) {
-        return sensorSet.remove(sensor);
+        return (sensorMeasurementsMap.remove(sensor) != null);
     }
 
-    public static boolean storeMeasurement(String username, Measurement measurement) {
-        List<Measurement> list = measurementMap.computeIfAbsent(username, k -> new LinkedList<>());
-        list.add(measurement);
+    public static boolean storeMeasurement(Sensor sensor, Measurement measurement) {
+        List<Measurement> measurements = sensorMeasurementsMap.get(sensor);
+        if (measurements == null) {
+            return false;
+        }
 
-        return true;
+        return measurements.add(measurement);
     }
 }
