@@ -3,6 +3,8 @@ package hr.fer.ztel.rassus.dz1.server.util;
 import hr.fer.ztel.rassus.dz1.server.model.Measurement;
 import hr.fer.ztel.rassus.dz1.server.model.Sensor;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +25,10 @@ public class Memory {
 
         sensorMeasurementsMap.put(sensor, new LinkedList<>());
         return true;
+    }
+
+    public static Collection<Sensor> getAllSensors() {
+        return Collections.unmodifiableCollection(sensorMeasurementsMap.keySet());
     }
 
     public static Sensor getClosestSensor(Sensor sensor) {
@@ -55,5 +61,10 @@ public class Memory {
         }
 
         return measurements.add(measurement);
+    }
+
+    public static Collection<Measurement> getMeasurementsForSensor(Sensor sensor) {
+        if (!sensorMeasurementsMap.containsKey(sensor)) return null;
+        else return Collections.unmodifiableCollection(sensorMeasurementsMap.get(sensor));
     }
 }

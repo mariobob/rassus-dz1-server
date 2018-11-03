@@ -11,9 +11,9 @@ import lombok.ToString;
 @AllArgsConstructor
 public class Measurement {
 
-    private final int temperature;
-    private final int pressure;
-    private final int humidity;
+    private final Integer temperature;
+    private final Integer pressure;
+    private final Integer humidity;
     private final Integer co;
     private final Integer no2;
     private final Integer so2;
