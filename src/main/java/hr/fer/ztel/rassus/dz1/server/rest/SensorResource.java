@@ -19,12 +19,13 @@ import javax.ws.rs.core.Response;
 @Log4j2
 @Path("sensor")
 public class SensorResource {
+    // http://localhost:8080/measurements/rest/sensor/
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public Response registerSensor(String json) {
-        log.info("POST /measurements/sensor: {}", json);
+        log.info("POST /measurements/rest/sensor: {}", json);
         if (json == null) {
             return Response.status(200).entity(false).build();
         }
@@ -44,30 +45,26 @@ public class SensorResource {
 
     @DELETE
     @Path("/{username}")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response deregisterSensor(@PathParam("username") String username) {
-        log.info("DELETE /measurements/sensor/{}", username);
+        log.info("DELETE /measurements/rest/sensor/{}", username);
         Sensor sensor = Memory.getSensorForName(username);
 
         if (sensor == null) {
             log.info("Sensor with name {} not found", username);
-            return Response.status(404).build();
+            return Response.status(404).entity(false).build();
         }
 
         boolean success = Memory.deregisterSensor(sensor);
-        if (success) {
-            log.info("Successfully deregistered sensor {}", sensor);
-            return Response.status(200).build();
-        }
-
-        log.info("Problem encountered while deregistering sensor {}", sensor);
-        return Response.status(500).build();
+        log.info("{} registered sensor {}", (success ? "Successfully" : "Unsuccessfully"), sensor.getUsername());
+        return Response.status(500).entity(success).build();
     }
 
     @GET
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getClosestSensor(@PathParam("username") String username) {
-        log.info("GET /measurements/sensor/{}", username);
+        log.info("GET /measurements/rest/sensor/{}", username);
 
         Sensor thisSensor = Memory.getSensorForName(username);
         Sensor closestSensor = Memory.getClosestSensor(thisSensor);
@@ -77,11 +74,11 @@ public class SensorResource {
     }
 
     @POST
-    @Path("/{username}/measure")
+    @Path("/{username}/publish")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public Response postMeasurement(@PathParam("username") String username, String json) {
-        log.info("POST /measurements/sensor/{}/measure {}", username, json);
+        log.info("POST /measurements/rest/sensor/{}/publish: {}", username, json);
 
         Sensor sensor = Memory.getSensorForName(username);
         if (sensor == null) {

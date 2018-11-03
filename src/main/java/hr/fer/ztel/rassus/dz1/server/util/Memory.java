@@ -26,7 +26,7 @@ public class Memory {
     }
 
     public static Sensor getClosestSensor(Sensor sensor) {
-        if (sensorMeasurementsMap.size() == 1 && sensorMeasurementsMap.containsKey(sensor)) {
+        if (sensor == null || sensorMeasurementsMap.size() == 1 && sensorMeasurementsMap.containsKey(sensor)) {
             // If this is the only sensor in memory
             return null;
         }

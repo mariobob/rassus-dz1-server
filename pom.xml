@@ -62,6 +62,12 @@
             <artifactId>jersey-hk2</artifactId>
             <version>2.27</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-json-jackson -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>2.27</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -73,6 +79,7 @@
                 <version>9.4.12.v20180830</version>
                 <configuration>
                     <scanIntervalSeconds>60</scanIntervalSeconds>
+                    <reload>manual</reload>
                     <webApp>
                         <contextPath>/measurements</contextPath>
                     </webApp>
