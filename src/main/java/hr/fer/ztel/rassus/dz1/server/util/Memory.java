@@ -67,4 +67,8 @@ public class Memory {
         if (!sensorMeasurementsMap.containsKey(sensor)) return null;
         else return Collections.unmodifiableCollection(sensorMeasurementsMap.get(sensor));
     }
+
+    public static Map<Sensor, List<Measurement>> getAllMeasurements() {
+        return Collections.unmodifiableMap(sensorMeasurementsMap);
+    }
 }

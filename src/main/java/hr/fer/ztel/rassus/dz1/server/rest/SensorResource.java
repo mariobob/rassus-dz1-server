@@ -20,7 +20,24 @@ import java.util.Collection;
 @Log4j2
 @Path("sensors")
 public class SensorResource {
-    // http://localhost:8080/measurements/rest/sensors/
+    // http://localhost:8080/measurementhost/rest/sensors/
+
+    /**
+     * Returns all sensors.
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllSensors() {
+        log.info("GET /measurementhost/rest/sensors");
+
+        Collection<Sensor> sensors = Memory.getAllSensors();
+        log.debug("  Sensors: {}", sensors);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(sensors);
+
+        return Response.status(200).entity(json).build();
+    }
 
     /**
      * Registers a sensor constructed from the specified json string.
@@ -34,7 +51,7 @@ public class SensorResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public Response registerSensor(String json) {
-        log.info("POST /measurements/rest/sensors");
+        log.info("POST /measurementhost/rest/sensors");
 
         if (json == null || json.isEmpty()) {
             return Response.status(400).entity(false).build();
@@ -59,30 +76,13 @@ public class SensorResource {
     }
 
     /**
-     * Returns all sensors.
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllSensors() {
-        log.info("GET /measurements/rest/sensors");
-
-        Collection<Sensor> sensors = Memory.getAllSensors();
-        log.debug("  Sensors: {}", sensors);
-
-        Gson gson = new Gson();
-        String json = gson.toJson(sensors);
-
-        return Response.status(200).entity(json).build();
-    }
-
-    /**
      * Returns a sensor with the specified username.
      */
     @GET
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSensor(@PathParam("username") String username) {
-        log.info("GET /measurements/rest/sensors/{}", username);
+        log.info("GET /measurementhost/rest/sensors/{}", username);
 
         Sensor sensor = Memory.getSensorForName(username);
         if (sensor == null) {
@@ -105,7 +105,7 @@ public class SensorResource {
     @Path("/{username}")
     @Produces(MediaType.TEXT_PLAIN)
     public Response deregisterSensor(@PathParam("username") String username) {
-        log.info("DELETE /measurements/rest/sensors/{}", username);
+        log.info("DELETE /measurementhost/rest/sensors/{}", username);
         Sensor sensor = Memory.getSensorForName(username);
 
         if (sensor == null) {
@@ -117,9 +117,9 @@ public class SensorResource {
         if (success) {
             log.info("  Successfully deregistered sensor: {}", sensor.getUsername());
         } else {
-            log.warn("  Failed to register sensor: {}", sensor);
+            log.warn("  Failed to deregister sensor: {}", sensor);
         }
-        return Response.status(500).entity(success).build();
+        return Response.status(200).entity(success).build();
     }
 
     /**
@@ -129,7 +129,7 @@ public class SensorResource {
     @Path("/{username}/closest")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getClosestSensor(@PathParam("username") String username) {
-        log.info("GET /measurements/rest/sensors/{}/closest", username);
+        log.info("GET /measurementhost/rest/sensors/{}/closest", username);
 
         Sensor thisSensor = Memory.getSensorForName(username);
         if (thisSensor == null) {
@@ -150,7 +150,7 @@ public class SensorResource {
     @Path("/{username}/measurements")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMeasurementsForSensor(@PathParam("username") String username) {
-        log.info("GET /measurements/rest/sensors/{}/measurements", username);
+        log.info("GET /measurementhost/rest/sensors/{}/measurements", username);
 
         Sensor sensor = Memory.getSensorForName(username);
         if (sensor == null) {
@@ -175,7 +175,7 @@ public class SensorResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public Response postMeasurement(@PathParam("username") String username, String json) {
-        log.info("POST /measurements/rest/sensors/{}/measurements", username);
+        log.info("POST /measurementhost/rest/sensors/{}/measurements", username);
         log.debug(json);
 
         Sensor sensor = Memory.getSensorForName(username);
@@ -189,8 +189,8 @@ public class SensorResource {
             Measurement measurement = gson.fromJson(json, Measurement.class);
 
             boolean success = Memory.storeMeasurement(sensor, measurement);
-            log.info("  {} stored measurement for sensor {}: {}",
-                    (success ? "Successfully" : "Unsuccessfully"), sensor.getUsername(), measurement);
+            log.info("  {} stored measurement: {}",
+                    (success ? "Successfully" : "Unsuccessfully"), measurement);
             return Response.status(201).entity(success).build();
         } catch (Exception e) {
             log.warn("  Invalid measurement data for json: \n{}", json);

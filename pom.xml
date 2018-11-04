@@ -81,7 +81,7 @@
                     <scanIntervalSeconds>60</scanIntervalSeconds>
                     <reload>manual</reload>
                     <webApp>
-                        <contextPath>/measurements</contextPath>
+                        <contextPath>/measurementhost</contextPath>
                     </webApp>
                 </configuration>
             </plugin>
